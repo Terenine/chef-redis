@@ -75,19 +75,18 @@ end
 if node['redis']['source']['create_service']
   node.set['redis']['daemonize'] = "yes"
 
+  ruby_block "insert_line" do
+    block do
+      file = Chef::Util::FileEdit.new("#{cache_dir}/#{tar_dir}/utils/redis_init_script")
+      file.insert_line_after_match("/bin\/sh/", "#   chkconfig: 2345 90 10")
+      file.write_file
+    end
+  end
+
   execute "Install redis-server init.d script" do
     command   <<-COMMAND
       cp #{cache_dir}/#{tar_dir}/utils/redis_init_script /etc/init.d/redis
     COMMAND
-
-    ruby_block "insert_line" do
-      block do
-        file = Chef::Util::FileEdit.new("/etc/init.d/redis")
-        file.insert_line_after_match("/bin\/sh/", "#   chkconfig: 2345 90 10")
-        file.write_file
-      end
-    end
-    
 
     creates   "/etc/init.d/redis"
   end
