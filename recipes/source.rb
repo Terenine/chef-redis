@@ -83,7 +83,7 @@ if node['redis']['source']['create_service']
     ruby_block "insert_line" do
       block do
         file = Chef::Util::FileEdit.new("/etc/init.d/redis")
-        file.insert_line_after_match("/^#\!\/bin\//", "#   chkconfig: 2345 90 10")
+        file.insert_line_after_match("/bin\/sh/", "#   chkconfig: 2345 90 10")
         file.write_file
       end
     end
